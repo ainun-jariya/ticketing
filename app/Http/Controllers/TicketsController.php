@@ -29,9 +29,12 @@ class TicketsController extends Controller
 
         $ticket = Ticket::find($id);
         $user = User::find(Auth::user()->id);
-        $user->wallet = (double)$ticket->ticketable->price * 0.75;
+        $event = $ticket->ticketable;
+        $user->wallet = (double)$event->price * 0.75;
         $user->save();
-        $ticket->delete();
+        $ticket->delete();  
+        $event->quota = $event->quota + 1;
+        $event->save();
         flash_message('Ticket refunded to wallet', 'info');
         return redirect()->to('/');
     }

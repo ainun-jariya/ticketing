@@ -51,7 +51,8 @@ class Event extends Model
         'creator_id',
         'price',
         'highlight',
-        'location'
+        'location',
+        'quota'
     ];
 
     /**

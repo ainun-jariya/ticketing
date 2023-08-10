@@ -20,13 +20,13 @@
       <div class="col-2">
         @include('shared._profile')
       </div>
-      <div class="col">
+      <div class="col px-5 py-2">
         @include('shared._flash_message')
         @yield('content')
       </div>
     </div>
     <div class="pure-u-1-3 row">
-      <div class="col bg-light p-4">
+      <div class="col bg-light p-5">
         @yield('form')
       </div>
     </div>

@@ -20,7 +20,7 @@ class EventsController extends Controller
             'poster' => 'required|mimes:png,jpg,jpeg'
         ]);
         $event = new Event;
-        $event->fill($request->only(['title', 'description']));
+        $event->fill($request->only(['title', 'description', 'quota', 'price', 'location', 'highlight']));
         if($request->file('poster')){
             $path = 'images/events';
             $file= $request->file('poster');
@@ -39,10 +39,16 @@ class EventsController extends Controller
     public function buyTicket(Request $request, $id)
     {
         $event = Event::find($id);
+        if($event->quota < 1) {
+            flash_message('I am sorry, ticket already sold out', 'danger');
+            return redirect()->to('/');
+        }
         $ticket = new Ticket;
         $ticket->user_id = Auth::user()->id;
         $event->tickets()->save($ticket);
         $event->user->update(['wallet' => $event->user->wallet + $event->price]);
+        $event->quota = $event->quota - 1;
+        $event->save();
         flash_message('Successfully bought a ticket', 'info');
         return redirect()->to('/');
     }
@@ -50,7 +56,7 @@ class EventsController extends Controller
     public function destroy(Request $request, $id)
     {
         $event = Event::find($id);
-        $event->tickets()->deleteAll();
+        $event->tickets()->delete();
         $event->delete();
         flash_message('Event deleted', 'info');
         return redirect()->to('/');

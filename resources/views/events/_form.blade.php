@@ -30,6 +30,10 @@
         <label for="price" class="form-label">Ticket Price</label>
         <input type="number" name="price" required class="form-control">
       </div>
+      <div class="col">
+        <label for="quota" class="form-label">Quota</label>
+        <input type="number" name="quota" required class="form-control">
+      </div>
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>

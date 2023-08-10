@@ -9,8 +9,7 @@
     @endif
   </div>
   <ul class="list-group list-group-flush" style="border: 0">
-    <li class="list-group-item small text-end"><a data-bs-toggle='modal' href='#event-{{$event->id}}'>Detail</a></li>
-    <li class="list-group-item small">Price: <span class="text-end" >Rp {{ $event->price }}</span></li>
+    <li class="list-group-item small  justify-content-between d-flex"><span>Quota: {{ $event->quota }}</span><a data-bs-toggle='modal' href='#event-{{$event->id}}'>Detail</a></li>
     <li class="list-group-item small">Mulai: {{ to_date($event->start_at) }} {{ to_time($event->start_at) }}</li>
     <li class="list-group-item small">Selesai: {{ to_date($event->end_at) }} {{ to_time($event->end_at) }}</li>
     <li class="list-group-item small">Lokasi: {{ $event->location }}</li>
@@ -26,9 +25,10 @@
   </ul>
   <div class="card-body">
     @if(Auth::user()->promoter)
-        <form action="/events/{{$event->id}}" method="POST">
+        <form action="/events/{{$event->id}}" method="POST" class="justify-content-between d-flex">
             @csrf
             @method('DELETE')
+            <span class="small">Rp {{ $event->price }}</span>
             <button title="Delete Event" class="btn btn-danger btn-sm">Delete</button>
         </form>
     @else
@@ -36,13 +36,18 @@
             <form action="/tickets/{{$event->getUserTicket()->id}}/refund" method="POST">
               @csrf
               @method('PUT')
-              <button title="Refund Ticket" class="btn btn-warning btn-sm">Refund</button><br/>
-              <i class="small">Refund: 75% of ticket price (approx: Rp {{ $event->price * 0.75}})</i>
+              <div class="justify-content-between d-flex">
+                <span class="small">Rp {{ $event->price }}</span>
+                <button title="Refund Ticket" class="btn btn-warning btn-sm">Refund</button>
+                </div>
+                <br/>
+              <i class="small" style="font-size: 0.65em">*Refund: 75% of ticket price (approx: Rp {{ $event->price * 0.75}})</i>
             </form>
         @else
-            <form action="/events/{{$event->id}}/buy-ticket" method="POST">
+            <form action="/events/{{$event->id}}/buy-ticket" class="justify-content-between d-flex" method="POST">
               @csrf
               @method('PUT')
+              <span class="small">Rp {{ $event->price }}</span>
               <button title="Buy Ticket" class="btn btn-primary btn-sm">Buy</button>
             </form>
         @endif
