@@ -7,10 +7,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Ticket;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    public function tickets() :HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function subscribedEvents() :HasManyThrough
+    {
+        return $this->hasManyThrough(Event::class, Ticket::class, 'user_id', 'id', 'id', 'ticketable_id');
+    }
+
+    public function events() :HasMany
+    {
+        return $this->hasMany(Event::class, 'creator_id', 'id');
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +39,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'photo',
+        'promoter',
+        'phone',
+        'wallet'
     ];
 
     /**
@@ -41,5 +63,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'wallet' => 'double'
     ];
 }
