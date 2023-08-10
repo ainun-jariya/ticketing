@@ -25,7 +25,7 @@ class EventsController extends Controller
             $path = 'images/events';
             $file= $request->file('poster');
             $filename= date('YmdHi').$file->getClientOriginalName();
-            $file->move(public_path('images/events'), $filename);
+            $file->move(public_path($path), $filename);
             $event->poster = $path . '/' . $filename;
         }
         $event->start_at = Carbon::tomorrow();
@@ -42,7 +42,18 @@ class EventsController extends Controller
         $ticket = new Ticket;
         $ticket->user_id = Auth::user()->id;
         $event->tickets()->save($ticket);
+        $event->user->update(['wallet' => $event->user->wallet + $event->price]);
         flash_message('Successfully bought a ticket', 'info');
         return redirect()->to('/');
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $event = Event::find($id);
+        $event->tickets()->deleteAll();
+        $event->delete();
+        flash_message('Event deleted', 'info');
+        return redirect()->to('/');
+
     }
 }

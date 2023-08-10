@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \Auth;
+use Auth;
+use Validator;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -23,15 +25,24 @@ class AuthController extends Controller
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            flash_message($validator->errors()->first(), 'danger');
+            return redirect()->back();
         }
    
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+        if($request->file('photo')){
+            $path = 'images/users';
+            $file= $request->file('photo');
+            $filename= date('YmdHi').$file->getClientOriginalName();
+            $file->move(public_path($path), $filename);
+            $input['photo'] = $path . '/' . $filename;
+        }
         $user = User::create($input);
         $success['token'] =  $user->createToken('ticketing')->plainTextToken;
         $success['name'] =  $user->name;
    
+        flash_message('Registration success', 'info');
         return redirect()->to('/login');
     }
    

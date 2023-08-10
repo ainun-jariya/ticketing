@@ -49,7 +49,9 @@ class Event extends Model
         'start_at',
         'end_at',
         'creator_id',
-        'price'
+        'price',
+        'highlight',
+        'location'
     ];
 
     /**

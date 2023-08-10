@@ -1,50 +1,40 @@
 @extends('application')
 
 @section('content')
-  @include('shared._profile')
+  
   @if(Auth::user()->promoter)
-    <p><strong>Hi, Promoter</strong></p>
-    @include('events._form')
-    <h3>Event</h3>
-    @foreach ($promoterEvents as $event)
-      <div class="user">
-          <h3>{{ $event->title }}</h3>
-          <img src="{{ $event->poster }}" alt="{{ $event->title }} - Poster" />
-          <p>{{ $event->description }}</p>
-      </div>
-    @endforeach
+  <div class="col">
+    <center><h3>Event</h3></center>
+    <p class="text-end"><a class="btn btn-sm btn-outline-primary">+ New Event</a></p>
+    <div class="row justify-content-center">
+      @forelse ($promoterEvents as $event)
+        @include('events._show', ['event' => $event, 'bought' => false])
+      @empty
+      <p class="alert alert-warning p-1 small">You create no event yet</p>
+      @endforelse
+    </div>
+  </div>
   @else
-    <h3>My Event</h3>
-    @foreach ($myEvents as $event)
-        <div class="user">
-            <h3>{{ $event->title }}</h3>
-            <img src="{{ $event->poster }}" alt="{{ $event->title }} - Poster" />
-            <p>{{ $event->description }}</p>
-            <p>QR Code</p>
-            {!! QrCode::size(100)
-              ->errorCorrection('M')
-              ->generate('http://localhost:8000/tickets/' . $event->getUserTicket()->id . '/use') !!}
-            <form action="/tickets/{{$event->getUserTicket()->id}}/refund" method="POST">
-              @csrf
-              @method('PUT')
-              <button title="Refund Ticket" class="btn btn-danger btn-sm">Refund</button>
-              <i>Refund: 75% of ticket price</i>
-            </form>
-        </div>
-    @endforeach
-    <h3>Other Upcoming Event</h3>
-    @foreach ($upcomingEvents as $event)
-        <div class="user">
-            <h3>{{ $event->title }}</h3>
-            <img src="{{ $event->poster }}" alt="{{ $event->title }} - Poster" />
-            <p>{{ $event->description }}</p>
-            <form action="/events/{{$event->id}}/buy-ticket" method="POST">
-              @csrf
-              @method('PUT')
-              <button title="Buy Ticket" class="btn btn-danger btn-sm">Buy</button>
-            </form>
-        </div>
-    @endforeach
+    <center><h3>My Event</h3></center>
+    <div class="row justify-content-center">
+    @forelse ($myEvents as $event)
+      @include('events._show', ['event' => $event, 'bought' => true])
+    @empty
+      <p class="alert alert-warning p-1 small">You have no event yet</p>
+    @endforelse
+    </div>
+    <center><h3>Other Upcoming Event</h3></center>
+    <div class="row justify-content-center">
+    @forelse ($upcomingEvents as $event)
+      @include('events._show', ['event' => $event, 'bought' => false])
+      @empty
+      <p class="alert alert-warning p-1 small">No event available at the moment</p>
+    @endforelse
+    </div>
   @endif
   
+@endsection
+
+@section('form')
+  @include('events._form')
 @endsection
