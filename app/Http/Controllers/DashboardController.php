@@ -16,7 +16,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $upcomingEvents = Event::available()->boughtOne()->get();
+        $upcomingEvents = Event::available()->nonBoughtOne()->get();
         $promoterEvents = Auth::user()->events;
         $myEvents = Auth::user()->subscribedEvents;
         return view('dashboard', compact('upcomingEvents', 'myEvents', 'promoterEvents'));

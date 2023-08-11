@@ -20,7 +20,20 @@ class Event extends Model
             ->whereRaw('start_at > ?', Carbon::now()->format('Y-m-d H:i:s'));
     }
 
-    public function scopeBoughtOne($query)
+    public function scopeOnGoing($query)
+    {
+        return $query
+            ->whereRaw('start_at < ?', Carbon::now()->format('Y-m-d H:i:s'))
+            ->whereRaw('end_at > ?', Carbon::now()->format('Y-m-d H:i:s'));
+    }
+
+    public function scopePassed($query)
+    {
+        return $query
+            ->whereRaw('end_at < ?', Carbon::now()->format('Y-m-d H:i:s'));
+    }
+
+    public function scopeNonBoughtOne($query)
     {
         $boughtOne = Auth::user()->subscribedEvents()->pluck('events.id')->toArray();
         return $query

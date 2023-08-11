@@ -15,11 +15,16 @@
     </style>
 </head>
 <body>
-  <div class="pure-g container-fluid py-3" style="justify-content: center;">
+  <div class="pure-g container-fluid py-3" style="margin-top:70px;">
+  <div class="pure-u-1-3 row">
+      @include('shared._navbar')
+  </div>
     <div class="pure-u-1-3 row">
-      <div class="col-2">
-        @include('shared._profile')
-      </div>
+      @if(Auth::user())
+        <div class="col-2">
+          @include('shared._profile')
+        </div>
+      @endif
       <div class="col px-5 py-2">
         @include('shared._flash_message')
         @yield('content')
